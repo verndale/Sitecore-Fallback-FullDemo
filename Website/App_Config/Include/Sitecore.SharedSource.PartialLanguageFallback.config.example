@@ -1,0 +1,194 @@
+<configuration xmlns:patch="http://www.sitecore.net/xmlconfig/">
+  <sitecore>
+
+    <databases>
+      <!-- Custom GetItemCommand in order to support the "Enforcing of Version Presence" functionality -->
+      <database id="master" singleInstance="true" type="Sitecore.Data.Database, Sitecore.Kernel">
+        <Engines.DataEngine.Commands.GetItemPrototype>
+          <obj type="Sitecore.SharedSource.PartialLanguageFallback.DataEngine.GetItemCommand, Sitecore.SharedSource.PartialLanguageFallback" />
+        </Engines.DataEngine.Commands.GetItemPrototype>
+      </database>
+      <database id="web" singleInstance="true" type="Sitecore.Data.Database, Sitecore.Kernel">
+        <Engines.DataEngine.Commands.GetItemPrototype>
+          <obj type="Sitecore.SharedSource.PartialLanguageFallback.DataEngine.GetItemCommand, Sitecore.SharedSource.PartialLanguageFallback" />
+        </Engines.DataEngine.Commands.GetItemPrototype>
+      </database>
+    </databases>
+
+    <pipelines>
+      <renderContentEditor>
+        <!--Important to allow [fallback value] to display near the field label-->
+        <processor type="Sitecore.Shell.Applications.ContentEditor.Pipelines.RenderContentEditor.RenderSkinedContentEditor, Sitecore.Client">
+          <patch:attribute name="type">Sitecore.SharedSource.PartialLanguageFallback.Pipelines.RenderContentEditor.CustomRenderSkinedContentEditor,Sitecore.SharedSource.PartialLanguageFallback</patch:attribute>
+        </processor>
+      </renderContentEditor>
+      
+      <!--ADDED FOR FALLBACK DEMO-->
+      <httpRequestBegin>
+        <!-- Custom pipeline processor that redirects to page not found in no item version for current language, 
+        will perform some validation even if enforce version presence is not set to true, so that a blank page will never be loaded -->
+        <!--Please note that something similar was added to prevent serving up items limited to certain countries that are not the current country in session, 
+        this had to be added to the web.config, in 2 locations, <httpModules> and <system.webServer>  <modules>:
+        <add type="Verndale.SharedSource.SitecoreProcessors.RegionValidationModule, Verndale.SharedSource" name="RegionValidationModule" />
+        -->
+        <processor patch:after="*[@type='Sitecore.Pipelines.HttpRequest.ItemResolver, Sitecore.Kernel']" type="Verndale.SharedSource.SitecoreProcessors.ItemLanguageValidation, Verndale.SharedSource" />
+        
+        <!-- Custom pipeline processor that will set the .net culture based on the current sitecore context language -->
+        <processor patch:after="*[@type='Verndale.SharedSource.SitecoreProcessors.ItemLanguageValidation, Verndale.SharedSource']" type="Verndale.SharedSource.SitecoreProcessors.CultureResolver, Verndale.SharedSource" />
+      </httpRequestBegin>
+      
+      <!--ADDED FOR FALLBACK DEMO-->
+      <getTranslation>
+        <!-- Custom pipeline processor that will get the fallback language of the current language 
+        and attempt to get the translation of that, as a final step in getTranslation -->
+        <processor patch:after="*[@type='Sitecore.Pipelines.GetTranslation.TryGetFromCoreDatabase, Sitecore.Kernel']" type="Verndale.SharedSource.SitecoreProcessors.TryGetFromFallbackLanguage, Verndale.SharedSource" />
+      </getTranslation>
+    </pipelines>
+
+    <!--ADDED FOR FALLBACK DEMO-->
+    <events timingLevel="custom">
+      <event name="item:created">
+        <handler type="Verndale.SharedSource.SitecoreProcessors.CreateVersionInAllLanguagesOnCreate, Verndale.SharedSource" method="OnItemCreated"/>
+      </event>
+    </events>
+
+    <standardValues>
+      <providers>
+        <add name="sitecore">
+          <patch:attribute name="type">Sitecore.SharedSource.PartialLanguageFallback.Providers.FallbackLanguageProvider,Sitecore.SharedSource.PartialLanguageFallback</patch:attribute>
+          <!-- Pipe separated list of the databases that support the fallback 
+               example: master|web
+          -->
+          <SupportedDatabases>master|web</SupportedDatabases>
+        </add>
+      </providers>
+    </standardValues>
+
+    <sites>
+      <site name="shell">
+        <!--It seems that if it is not enabled on shell, it doesn't display [fallback value] next to label,
+        FYI, View Standard fields also cannot be checked in order for [fallback value] to display, 
+        since a different content editor renderer is used in that mode -->
+        <patch:attribute name="enableFallback">true</patch:attribute>
+      </site>
+      <!--ADDED FOR FALLBACK DEMO-->
+      <!--enforceVersionPresence: for use with GetItemCommand above, and Verndale.SharedSource.Helpers HasContextLanguage in Verndale.SharedSource-->
+      <!--pageNotFoundGUID: for use with Verndale.SharedSource.SitecoreProcessors ItemLanguageValidation in Verndale.SharedSource-->
+      <!--dictionaryDomain: the guid of the dictionary domain item for the site-->
+      <!--languageEmbedding: for use with Verndale.SharedSource.SitecoreProviders CustomLinkProvider in Verndale.SharedSource-->
+      <site name="fallbackdemo">
+        <patch:attribute name="enableFallback">true</patch:attribute>
+        <patch:attribute name="enforceVersionPresence">true</patch:attribute>
+        <patch:attribute name="pageNotFoundGUID">{38AF379B-B4C8-4992-B161-50D99D568887}</patch:attribute>
+        <patch:attribute name="dictionaryDomain">{CDFE41E4-F32D-46A9-B9E8-EF58DEC0B445}</patch:attribute>
+        <patch:attribute name="languageEmbedding">always</patch:attribute>
+      </site>
+      <site name="website">
+        <patch:attribute name="enableFallback">true</patch:attribute>
+        <!--<patch:attribute name="enforceVersionPresence">true</patch:attribute>-->
+        <patch:attribute name="pageNotFoundGUID">{38AF379B-B4C8-4992-B161-50D99D568887}</patch:attribute>
+        <patch:attribute name="dictionaryDomain">{CDFE41E4-F32D-46A9-B9E8-EF58DEC0B445}</patch:attribute>
+        <patch:attribute name="languageEmbedding">never</patch:attribute>
+      </site>
+
+      <!-- When setting up "enforceVersionPresence" feature for the website above
+           make sure to uncomment the following for "publisher" site as well
+      -->
+      <!--<site name="publisher">
+        <patch:attribute name="enforceVersionPresence">true</patch:attribute>
+      </site>-->
+    </sites>
+
+    <settings>
+      <!--
+            If enabled, the 'enable fallback' checkbox on the field definition item will be looked up
+            in the SAME language version as the context language.
+            If set to 'true', then when 'en-CA' tries to fallback to 'en', the checkbox field will be retrieved
+            from the field definition item in 'en-CA', thus such version should exist.
+            This feature enables you to have different fallback settings for the same field in different content languages
+            If 'false', then the setting will be looked up from Fallback.MasterLanguage ('en' by default)
+            Default value: false
+         -->
+      <setting name="Fallback.VaryFallbackSettingsPerLanguage" value="false" />
+
+      <!--
+            Pipe separated list of feild IDs that will be ignored during the fallback process 
+            Example: {GUID}|{GUID}
+            Default value: empty
+         -->
+      <setting name="Fallback.IgnoredFields" value="{C8F93AFE-BFD4-4E8F-9C61-152559854661}|{4C346442-E859-4EFD-89B2-44AEDF467D21}|{7EAD6FD6-6CF1-4ACA-AC6B-B200E7BAFE88}|{86FE4F77-4D9A-4EC3-9ED9-263D03BD1965}" />
+
+      <!--
+            Whether to process language fallback for the system fields that start with "__"
+            Default value: false
+         -->
+      <setting name="Fallback.ProcessSystemFields" value="false" />
+
+      <!--
+            Pipe separated list of template GUIDs that support "Enforcing of Version Presence" functionality
+            Default value: empty
+         -->
+      <!--ADDED FOR FALLBACK DEMO: {522F307A-0ACE-45C8-93C7-FCE1096E3102} is the Base Fallback template created for this demo-->
+      <setting name="Fallback.EnforceVersionPresenceTemplates" value="{522F307A-0ACE-45C8-93C7-FCE1096E3102}" />
+
+      <setting name="Fallback.CacheSize" value="10MB" />
+
+      <!--
+            Registered Sitecore language to be used for enforcing language fallback, i.e. 'master' language
+            It is VERY important NOT to have this language to fallback to any other language on the item definition
+
+            The value could be different depending on a locale. For US, that would be 'en' or 'en-US' for example
+            If 'enforcing from master language' feature is enabled, this language will be used as a source language.
+
+            Default value: en
+         -->
+      <!--This should match whatever language is the main language for templates in the content editor, so this should be 'en'.
+      Changing this to something else would essentially tell it to look at that specified version (unless VaryFallbackSettingsPerLanguage is true)
+      to check if the 'enable fallback' checkbox is true when deciding whether it should try to fallback or not-->
+      <setting name="Fallback.MasterLanguage" value="en" />
+
+      <!--ADDED FOR FALLBACK DEMO -->
+      <!--comma delimited list of fields that should be used to check if an item is falling back in the Language Fallback Report Tool-->
+      <setting name="Fallback.FieldToCheckForReporting" value="Headline,Sub Headline,Main Content,Teaser" />
+
+      <!--ADDED FOR FALLBACK DEMO -->
+      <!--Pipe delimited list of paths in the sitecore tree that specify the locations within which if an item is created, 
+      it automatically add all language versions, if you do not want this functionality, leave it blank-->
+      <setting name="Fallback.PathsToCheckForLanguageVersions" value="/sitecore/content/fallback demo|/sitecore/media library/files|/sitecore/media library/images" />
+
+      
+      <!--ADDED FOR FALLBACK DEMO: below are overrides for various settings-->
+      <setting name="HtmlEditor.DefaultProfile">
+        <patch:attribute name="value">/sitecore/system/Settings/Html Editor Profiles/Rich Text Full</patch:attribute>
+      </setting>
+      <!--By default, Media items are not versionable and the below setting is set to false in the web.config.  
+        If you upload an image in one language, it will persist across all language versions.
+        If you change this to true, then versioning will apply and you would have to set the media item into all language versions, 
+        or enable fallback, but if enforce version presence is turned on, you'll have to make sure all language versions at least exist-->
+      <setting name="Media.UploadAsVersionableByDefault">
+        <patch:attribute name="value">true</patch:attribute>
+      </setting>
+
+      <setting name="Media.RequestExtension">
+        <patch:attribute name="value"></patch:attribute>
+      </setting>
+    </settings>
+
+    <commands>
+      <command name="flp:setupfallback" type="Sitecore.SharedSource.PartialLanguageFallback.Commands.SetupFallbackCommand,Sitecore.SharedSource.PartialLanguageFallback" />
+    </commands>
+
+    <!--ADDED FOR FALLBACK DEMO -->
+    <linkManager>
+      <patch:attribute name="defaultProvider">custom</patch:attribute>
+      <providers>
+        <clear />
+        <add name="custom"
+             type="Verndale.SharedSource.SitecoreProviders.CustomLinkProvider, Verndale.SharedSource"
+             addAspxExtension="false" alwaysIncludeServerUrl="false" encodeNames="true" languageEmbedding="never"
+             languageLocation="filePath" lowercaseUrls="true" shortenUrls="true" useDisplayName="true" />
+      </providers>
+    </linkManager>
+  </sitecore>
+
+</configuration>

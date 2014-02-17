@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{AF8CACBD-DD00-4635-911F-9041269D38D1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sitecore.SharedSource.PartialLanguageFallback</RootNamespace>
+    <AssemblyName>Sitecore.SharedSource.PartialLanguageFallback</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Nonshipping>true</Nonshipping>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Sitecore.Client">
+      <HintPath>references\6.6\Sitecore.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Sitecore.Kernel">
+      <HintPath>references\6.6\Sitecore.Kernel.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commands\SetupFallbackCommand.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="Extensions\LanguageExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\FieldExtensions.cs" />
+    <Compile Include="Extensions\ItemExtensions.cs" />
+    <Compile Include="Managers\FallbackLanguageManager.cs" />
+    <Compile Include="Pipelines\RenderContentEditor\RenderContentEditor.cs" />
+    <Compile Include="Providers\FallbackLanguageProvider.cs" />
+    <Compile Include="Caching\FallbackValuesCache.cs" />
+    <Compile Include="DataEngine\GetItemCommand.cs" />
+    <Compile Include="Utilities\LogUtil.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App_Config\Include\Sitecore.SharedSource.PartialLanguageFallback.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="data\packages\Sitecore.SharedSource.PartialLanguageFallback.zip" />
+    <None Include="data\serialization\core\sitecore\content\Applications\Content Editor\Ribbons\Chunks\Fallback.item" />
+    <None Include="data\serialization\core\sitecore\content\Applications\Content Editor\Ribbons\Chunks\Fallback\Do Not Enable Fallback.item" />
+    <None Include="data\serialization\core\sitecore\content\Applications\Content Editor\Ribbons\Chunks\Fallback\Enable Fallback.item" />
+    <None Include="data\serialization\core\sitecore\content\Applications\Content Editor\Ribbons\Strips\Configure\Fallback.item" />
+    <None Include="data\serialization\master\sitecore\templates\System\Language\Fallback.item" />
+    <None Include="data\serialization\master\sitecore\templates\System\Language\Fallback\FallbackLanguage.item" />
+    <None Include="data\serialization\master\sitecore\templates\System\Templates\Template field\Fallback.item" />
+    <None Include="data\serialization\master\sitecore\templates\System\Templates\Template field\Fallback\EnableFallbackIfConfigured.item" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="data\packages\Sitecore.SharedSource.PartialLanguageFallback.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

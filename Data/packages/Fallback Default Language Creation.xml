@@ -1,0 +1,57 @@
+<project>
+  <Metadata>
+    <metadata>
+      <PackageName>Fallback Default Language Creation</PackageName>
+      <Author>Liz Spranzani</Author>
+      <Version>1</Version>
+      <Revision />
+      <License />
+      <Comment />
+      <Attributes />
+      <Readme />
+      <Publisher />
+      <PostStep />
+      <PackageID />
+    </metadata>
+  </Metadata>
+  <SaveProject>True</SaveProject>
+  <Sources>
+    <xitems>
+      <Entries>
+        <x-item>/core/sitecore/content/Applications/Content Editor/Ribbons/Chunks/Language/Add All Language Versions/{1B1AEBCA-94E3-4426-8A47-36CEDA559E5E}/invariant/0</x-item>
+      </Entries>
+      <SkipVersions>False</SkipVersions>
+      <Converter>
+        <ItemToEntryConverter>
+          <Transforms />
+        </ItemToEntryConverter>
+      </Converter>
+      <Include />
+      <Exclude />
+      <Name>core</Name>
+    </xitems>
+    <xfiles>
+      <Entries>
+        <x-item>/App_Config/Commands.config</x-item>
+        <x-item>/App_Config/Include/Sitecore.SharedSource.PartialLanguageFallback.config</x-item>
+      </Entries>
+      <Converter>
+        <FileToEntryConverter>
+          <Root>/</Root>
+          <Transforms />
+        </FileToEntryConverter>
+      </Converter>
+      <Include />
+      <Exclude />
+      <Name>configs</Name>
+    </xfiles>
+  </Sources>
+  <Converter>
+    <TrivialConverter>
+      <Transforms />
+    </TrivialConverter>
+  </Converter>
+  <Include />
+  <Exclude />
+  <Name />
+</project>

@@ -1,0 +1,71 @@
+<project>
+  <Metadata>
+    <metadata>
+      <PackageName>Language Migration Tool</PackageName>
+      <Author>Liz Spranzani</Author>
+      <Version>1</Version>
+      <Revision />
+      <License />
+      <Comment />
+      <Attributes />
+      <Readme />
+      <Publisher />
+      <PostStep />
+      <PackageID />
+    </metadata>
+  </Metadata>
+  <SaveProject>True</SaveProject>
+  <Sources>
+    <xfiles>
+      <Entries>
+        <x-item>/sitecore modules/Web/LanguageTools/jquery-library.js</x-item>
+        <x-item>/sitecore modules/Web/LanguageTools/Language.css</x-item>
+        <x-item>/sitecore modules/Web/LanguageTools/LanguageMigration.aspx</x-item>
+        <x-item>/sitecore modules/Web/LanguageTools/LanguageMigration.aspx.cs</x-item>
+        <x-item>/sitecore modules/Web/LanguageTools/LanguageMigration.aspx.designer.cs</x-item>
+        <x-item>/sitecore modules/Web/LanguageTools/images/</x-item>
+        <x-item>/sitecore modules/Web/LanguageTools/images/ajax-loader.gif</x-item>
+        <x-item>/sitecore modules/Web/LanguageTools/images/icon-panel-close.png</x-item>
+        <x-item>/sitecore modules/Web/LanguageTools/images/icon-panel-open.png</x-item>
+        <x-item>/sitecore modules/Web/LanguageTools/images/icon-print-page.png</x-item>
+        <x-item>/sitecore modules/Web/LanguageTools/images/icon-topic-blue-arrow.png</x-item>
+        <x-item>/sitecore modules/Web/LanguageTools/images/icon-topic-green-arrow.png</x-item>
+        <x-item>/sitecore modules/Web/LanguageTools/images/icon-topic-green-collapse-arrow.png</x-item>
+        <x-item>/sitecore modules/Web/LanguageTools/images/icon-topic-green-expand-arrow.png</x-item>
+        <x-item>/sitecore modules/Web/LanguageTools/images/icon-topic-red-arrow.png</x-item>
+      </Entries>
+      <Converter>
+        <FileToEntryConverter>
+          <Root>/</Root>
+          <Transforms />
+        </FileToEntryConverter>
+      </Converter>
+      <Include />
+      <Exclude />
+      <Name>files</Name>
+    </xfiles>
+    <xitems>
+      <Entries>
+        <x-item>/core/sitecore/content/Applications/Language Migration/{50D007DE-57DA-403C-A697-5D538571F4E9}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Documents and settings/All users/Start menu/Right/Language Migration/{80B44127-950B-4023-9EDE-D74CE2760242}/invariant/0</x-item>
+      </Entries>
+      <SkipVersions>False</SkipVersions>
+      <Converter>
+        <ItemToEntryConverter>
+          <Transforms />
+        </ItemToEntryConverter>
+      </Converter>
+      <Include />
+      <Exclude />
+      <Name>core</Name>
+    </xitems>
+  </Sources>
+  <Converter>
+    <TrivialConverter>
+      <Transforms />
+    </TrivialConverter>
+  </Converter>
+  <Include />
+  <Exclude />
+  <Name />
+</project>
