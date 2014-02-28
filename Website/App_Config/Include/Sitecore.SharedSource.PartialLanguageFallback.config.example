@@ -22,7 +22,7 @@
           <patch:attribute name="type">Sitecore.SharedSource.PartialLanguageFallback.Pipelines.RenderContentEditor.CustomRenderSkinedContentEditor,Sitecore.SharedSource.PartialLanguageFallback</patch:attribute>
         </processor>
       </renderContentEditor>
-      
+
       <!--ADDED FOR FALLBACK DEMO-->
       <httpRequestBegin>
         <!-- Custom pipeline processor that redirects to page not found in no item version for current language, 
@@ -32,11 +32,11 @@
         <add type="Verndale.SharedSource.SitecoreProcessors.RegionValidationModule, Verndale.SharedSource" name="RegionValidationModule" />
         -->
         <processor patch:after="*[@type='Sitecore.Pipelines.HttpRequest.ItemResolver, Sitecore.Kernel']" type="Verndale.SharedSource.SitecoreProcessors.ItemLanguageValidation, Verndale.SharedSource" />
-        
+
         <!-- Custom pipeline processor that will set the .net culture based on the current sitecore context language -->
         <processor patch:after="*[@type='Verndale.SharedSource.SitecoreProcessors.ItemLanguageValidation, Verndale.SharedSource']" type="Verndale.SharedSource.SitecoreProcessors.CultureResolver, Verndale.SharedSource" />
       </httpRequestBegin>
-      
+
       <!--ADDED FOR FALLBACK DEMO-->
       <getTranslation>
         <!-- Custom pipeline processor that will get the fallback language of the current language 
@@ -75,7 +75,7 @@
       <!--enforceVersionPresence: for use with GetItemCommand above, and Verndale.SharedSource.Helpers HasContextLanguage in Verndale.SharedSource-->
       <!--pageNotFoundGUID: for use with Verndale.SharedSource.SitecoreProcessors ItemLanguageValidation in Verndale.SharedSource-->
       <!--dictionaryDomain: the guid of the dictionary domain item for the site-->
-      <!--languageEmbedding: for use with Verndale.SharedSource.SitecoreProviders CustomLinkProvider in Verndale.SharedSource-->
+      <!--languageEmbedding: for use with Verndale.SharedSource.SitecoreProviders CustomLinkProvider in Verndale.SharedSource, always/never/asNeeded-->
       <site name="fallbackdemo">
         <patch:attribute name="enableFallback">true</patch:attribute>
         <patch:attribute name="enforceVersionPresence">true</patch:attribute>
@@ -156,7 +156,7 @@
       it automatically add all language versions, if you do not want this functionality, leave it blank-->
       <setting name="Fallback.PathsToCheckForLanguageVersions" value="/sitecore/content/fallback demo" />
 
-      
+
       <!--ADDED FOR FALLBACK DEMO: below are overrides for various settings-->
       <setting name="HtmlEditor.DefaultProfile">
         <patch:attribute name="value">/sitecore/system/Settings/Html Editor Profiles/Rich Text Full</patch:attribute>
@@ -164,7 +164,8 @@
       <!--By default, Media items are not versionable and the below setting is set to false in the web.config.  
         If you upload an image in one language, it will persist across all language versions.
         If you change this to true, then versioning will apply and you would have to set the media item into all language versions, 
-        or enable fallback, but if enforce version presence is turned on, you'll have to make sure all language versions at least exist-->
+        or enable fallback, but if enforce version presence is turned on and media template guids are included in EnforceVersionPresenceTemplates, 
+        then you'll have to make sure all language versions at least exist-->
       <setting name="Media.UploadAsVersionableByDefault">
         <patch:attribute name="value">true</patch:attribute>
       </setting>
@@ -179,6 +180,7 @@
     </commands>
 
     <!--ADDED FOR FALLBACK DEMO -->
+    <!--custom LinkProvider will take languageEmbedding attribute in site node into account and apply the SiteResolving attribute-->
     <linkManager>
       <patch:attribute name="defaultProvider">custom</patch:attribute>
       <providers>
@@ -189,6 +191,15 @@
              languageLocation="filePath" lowercaseUrls="true" shortenUrls="true" useDisplayName="true" />
       </providers>
     </linkManager>
+
+    <!--ADDED FOR FALLBACK DEMO -->
+    <!--custom MediaProvider will embed language if applicable
+    Will be called from SitecoreHelper's GetMediaUrl, richtext ExpandDynamicLinks AND from sc:Image fields-->
+    <mediaLibrary>
+      <mediaProvider>
+        <patch:attribute name="type">Verndale.SharedSource.SitecoreProviders.CustomMediaProvider, Verndale.SharedSource</patch:attribute>
+      </mediaProvider>
+    </mediaLibrary>
   </sitecore>
 
 </configuration>

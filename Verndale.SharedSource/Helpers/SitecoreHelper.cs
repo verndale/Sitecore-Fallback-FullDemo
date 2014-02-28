@@ -614,20 +614,22 @@ namespace Verndale.SharedSource.Helpers
                 {
                     return false;
                 }
-
-                if (mediaItem != null)
+                else
                 {
-                    // encode the first part of the url first and then add the extension
-                    url = Sitecore.StringUtil.EnsurePrefix('/',
-                        Sitecore.MainUtil.EncodePath(MediaManager.GetMediaUrl(mediaItem, new MediaUrlOptions { IncludeExtension = false}), '/'));
-                    url = url + "." + mediaItem.Extension;
-                    UrlOptions urlOptions = UrlOptions.DefaultOptions;
-                    urlOptions = LanguageHelper.CheckOverrideLanguageEmbedding(urlOptions);
-                    if (urlOptions.LanguageEmbedding == LanguageEmbedding.Always)
-                        url = "/" + Sitecore.Context.Language.Name + url;
+                    url = Sitecore.StringUtil.EnsurePrefix('/', MediaManager.GetMediaUrl(mediaItem, new MediaUrlOptions { IncludeExtension = true }));
+
+                    // removing the logic from here that potentially embeds the language
+                    // instead, this is now set in a CustomMediaProvider GetMediaUrl override method
+                    // this media provider should be set in a config file to be used as the media provider instead of the default sitecore one
+
+                    //// check if language should be embedded, and if so, embed the context language
+                    //UrlOptions urlOptions = UrlOptions.DefaultOptions;
+                    //urlOptions = LanguageHelper.CheckOverrideLanguageEmbedding(urlOptions);
+                    //if (urlOptions.LanguageEmbedding == LanguageEmbedding.Always)
+                    //    url = "/" + Sitecore.Context.Language.Name + url;
+
+                    return true;
                 }
-                
-                return true;
             }
 
             /// <summary>

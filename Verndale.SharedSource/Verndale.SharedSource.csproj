@@ -65,6 +65,7 @@
     <Compile Include="SitecoreProcessors\RegionValidationModule.cs" />
     <Compile Include="SitecoreProcessors\TryGetFromFallbackLanguage.cs" />
     <Compile Include="SitecoreProviders\CustomLinkProvider.cs" />
+    <Compile Include="SitecoreProviders\CustomMediaProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\scSearchContrib\scSearchContrib.Searcher\scSearchContrib.Searcher.csproj">

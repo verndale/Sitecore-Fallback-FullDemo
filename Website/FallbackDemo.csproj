@@ -276,7 +276,9 @@
     <Content Include="App_Config\Include\scSearchContrib.Crawler.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_Config\Include\Sitecore.SharedSource.PartialLanguageFallback.config" />
+    <Content Include="App_Config\Include\Sitecore.SharedSource.PartialLanguageFallback.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="App_Config\Include\SitecoreSettings.config.example" />
     <None Include="App_Config\Include\SiteDefinition.config.example" />
     <None Include="App_Config\Include\WebDeploy.config.example" />
