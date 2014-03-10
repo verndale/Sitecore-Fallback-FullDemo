@@ -34,9 +34,9 @@ namespace Verndale.SharedSource.SitecoreProviders
             // Added by Verndale, check if language should be embedded
             UrlOptions urlOptions = UrlOptions.DefaultOptions;
             urlOptions = LanguageHelper.CheckOverrideLanguageEmbedding(urlOptions);
-            if (urlOptions.LanguageEmbedding == LanguageEmbedding.Always)
+            if (urlOptions.LanguageEmbedding == LanguageEmbedding.Always && options.UseItemPath)
             {
-                result = "/" + Sitecore.Context.Language.Name.ToLowerInvariant() + result;
+                result = "/" + Sitecore.Context.Language.Name.ToLowerInvariant() + Sitecore.StringUtil.EnsurePrefix('/', result);
             }
 
             return result;
