@@ -46,13 +46,26 @@ namespace Sitecore.SharedSource.PartialLanguageFallback.Providers
          var cache = _fallbackValuesCaches[database.Name];
          var ignore_cache = _fallbackIgnoreCaches[database.Name];
 
+         //<!--CHANGED BY VERNDALE-->
+         // this is called by InitializeEventHandlers, EventManager.Subscribe<PublishEndRemoteEvent>, where it passes in a null ItemUri
+         // Therefore on CD servers, where PublishEndRemoteEvent would be called, there would have been null errors when trying to use itemUri
+         // must add null check and if null, whole fallback cache should be cleared
+
          if (cache != null)
          {
-            cache.RemoveKeysContaining(itemUri.ItemID.ToString());
+             // Added a null check on itemUri
+            if (itemUri == null)
+                cache.Clear();
+            else
+                cache.RemoveKeysContaining(itemUri.ItemID.ToString());
          }
          if (ignore_cache != null)
          {
-            ignore_cache.RemoveKeysContaining(itemUri.ItemID.ToString());
+            // Added a null check on itemUri
+            if (itemUri == null)
+                ignore_cache.Clear();
+            else
+                ignore_cache.RemoveKeysContaining(itemUri.ItemID.ToString());
          }
       }
 
